@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TX Weather</title>
+    
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" href="icon.png">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TX Weather">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --text-main: #ffffff;
+            --accent: #00d2ff;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: env(safe-area-inset-top) 20px 20px 20px;
+            overflow-x: hidden;
+        }
+
+        .blob {
+            position: fixed;
+            z-index: -1;
+            filter: blur(60px);
+            border-radius: 50%;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .blob-1 { width: 300px; height: 300px; background: #00d2ff; top: -50px; left: -50px; }
+        .blob-2 { width: 400px; height: 400px; background: #9d50bb; bottom: -100px; right: -50px; }
+
+        .app-card {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 1rem;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .hero { text-align: center; margin-bottom: 30px; }
+        .temp { font-size: 5.5rem; font-weight: 200; margin: 10px 0; }
+        .condition-pill {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item i { color: var(--accent); width: 18px; }
+        .stat-label { font-size: 0.7rem; opacity: 0.6; display: block; }
+        .stat-value { font-size: 0.95rem; font-weight: 500; }
+
+        .forecast {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .f-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="app-card">
+        <header>
+            <i data-lucide="cloud-sun"></i>
+            <select id="loc">
+                <option value="canton">Canton, TX</option>
+                <option value="dallas">Dallas, TX</option>
+            </select>
+            <i data-lucide="settings" style="opacity: 0.5"></i>
+        </header>
+
+        <div class="hero">
+            <div id="city" style="font-size: 1.4rem; font-weight: 500;">Canton</div>
+            <div style="opacity: 0.6; font-size: 0.9rem;">Dec 24, 2025</div>
+            <div class="temp"><span id="t">77</span>°</div>
+            <span class="condition-pill" id="d">Partly Cloudy</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item"><i data-lucide="wind"></i><div><span class="stat-label">Wind</span><b class="stat-value" id="w">12 mph</b></div></div>
+            <div class="stat-item"><i data-lucide="droplets"></i><div><span class="stat-label">Humidity</span><b class="stat-value" id="h">76%</b></div></div>
+            <div class="stat-item"><i data-lucide="sun"></i><div><span class="stat-label">UV Index</span><b class="stat-value" id="u">Low</b></div></div>
+            <div class="stat-item"><i data-lucide="gauge"></i><div><span class="stat-label">Pressure</span><b class="stat-value" id="p">30.16"</b></div></div>
+        </div>
+
+        <div class="forecast">
+            <div class="f-row"><span>Christmas Day</span><b id="f1">80° / 64°</b></div>
+            <div class="f-row"><span>Friday</span><b id="f2">83° / 66°</b></div>
+            <div class="f-row"><span>Saturday</span><b id="f3">81° / 65°</b></div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const data = {
+            canton: { city: "Canton", t: 77, d: "Partly Cloudy", w: "12 mph", h: "76%", u: "Low", p: "30.16", f: ["80°/64°", "83°/66°", "81°/65°"]},
+            dallas: { city: "Dallas", t: 78, d: "Clear Sky", w: "14 mph", h: "72%", u: "Mod", p: "30.13", f: ["81°/64°", "84°/66°", "82°/65°"]}
+        };
+        document.getElementById('loc').addEventListener('change', (e) => {
+            const v = data[e.target.value];
+            document.getElementById('city').innerText = v.city;
+            document.getElementById('t').innerText = v.t;
+            document.getElementById('d').innerText = v.d;
+            document.getElementById('w').innerText = v.w;
+            document.getElementById('h').innerText = v.h;
+            document.getElementById('u').innerText = v.u;
+            document.getElementById('p').innerText = v.p + '"';
+            document.getElementById('f1').innerText = v.f[0];
+            document.getElementById('f2').innerText = v.f[1];
+            document.getElementById('f3').innerText = v.f[2];
+        });
+    </script>
+</body>
+</html>
